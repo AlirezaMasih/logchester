@@ -1,30 +1,30 @@
-#include <stdio.h> // for I/O operations
-#include <stdlib.h> // for memory management
-#include <fcntl.h> // for file access
-#include <unistd.h> // for reading files
-#include <utmp.h> // for reading utmp files
+#include <stdio.h> // For I/O operations (input/output)
+#include <stdlib.h> // For memory management (malloc, realloc, free)
+#include <fcntl.h> // For file access
+#include <unistd.h> // For reading files
+#include <utmp.h> // For reading utmp files
 
 
-// Define the structure utmp_data to store the data list and its length
+// Define the structure utmp_data to store the list of entries and its length
 struct utmp_data
 {
-    struct utmp *data; // Array of utmp structures
+    struct utmp *data; // Array to store the utmp structures
     int length; // Number of entries in the array
 };
 
-// Function declaration to read the utmp file and return a utmp_data structure
+// Function declaration to read the utmp file and return the data in a utmp_data structure
 struct utmp_data *read_file(char *path);
 
 
 int main()
 {
-    // Read the data from the file and store it in the structure
+    // Read the data from the utmp file and store it in the structure
     struct utmp_data *entry = read_file("/var/log/wtmp");
 
-    // Loop to print the information of each entry
+    // Loop to print the information of each entry in the data
     for(int i = 0; i < entry->length; i++)
     {
-        // Print the information of each entry
+        // Print the details of each entry from the utmp file
         printf("Type: %d\n", entry->data[i].ut_type);
         printf("User: %s\n", entry->data[i].ut_user);
         printf("TTY : %s\n", entry->data[i].ut_line);
@@ -34,51 +34,51 @@ int main()
         printf("---------------------------\n");
     }
 
-    // End using the utmp file
+    // End the use of the utmp file
     endutent();
 
     return 0;
 }
     
 
-// Function to read the utmp file and return the data
+// Function to read the utmp file and return a structure containing the data and its length
 struct utmp_data *read_file(char *path)
 {
-    // Allocate memory for the utmp_data structure
-    struct utmp_data *Returning_Data = malloc(sizeof(struct utmp_data)); // Structure to store data and count
-    struct utmp *utmp_entry = NULL; // Pointer to each utmp entry
-    struct utmp *entry_list = NULL; // Array to store the entries
+    // Allocate memory for the utmp_data structure to store the data and its length
+    struct utmp_data *Returning_Data = malloc(sizeof(struct utmp_data)); 
+    struct utmp *utmp_entry = NULL; // Pointer to hold each individual utmp entry
+    struct utmp *entry_list = NULL; // Array to store all the entries read from the file
 
-    int count = 0; // Number of entries
+    int count = 0; // Keep track of the number of entries
 
-    // Open the utmp file and prepare to read it
+    // Open the utmp file and prepare to read from it
     utmpname(path);  // Open the wtmp file from /var/log as a read-only file
     setutent(); // Start reading the data from the utmp file
 
 
-    // Read each entry from the file until the end
+    // Loop to read each entry from the file until the end
     while((utmp_entry = getutent()) != NULL)
     {
-        // Reallocate memory based on the number of entries
+        // Reallocate memory to accommodate the next entry in the list
         entry_list = realloc(entry_list, (count + 1) * sizeof(struct utmp));
         if(entry_list == NULL)
         {
-            // If realloc fails, free the previous memory and print an error
+            // If realloc fails, free the previously allocated memory and print an error
             free(entry_list);
-            perror("You don't have enough memory space.");
+            perror("Memory allocation failed.");
             endutent();
             return NULL;
         }    
 
-        // Copy the data of the current utmp entry to the list
+        // Store the current utmp entry into the list
         entry_list[count++] = *utmp_entry;
     }
 
-    // Assign the list of entries and the count to the returning data structure
+    // Assign the list of entries and the total number of entries to the structure to be returned
     Returning_Data->data = entry_list;
     Returning_Data->length = count;
 
-    // Return the structure containing the data and length
+    // Return the structure containing the list of data and the count of entries
     return Returning_Data;
 }
 
