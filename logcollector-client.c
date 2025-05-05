@@ -60,8 +60,8 @@ struct utmp_data *read_file(char *path)
     while((utmp_entry = getutent()) != NULL)
     {
         // Reallocate memory based on the number of entries
-        struct utmp *temp = realloc(entry_list, (count + 1) * sizeof(struct utmp));
-        if(temp == NULL)
+        entry_list = realloc(entry_list, (count + 1) * sizeof(struct utmp));
+        if(entry_list == NULL)
         {
             // If realloc fails, free the previous memory and print an error
             free(entry_list);
@@ -70,8 +70,6 @@ struct utmp_data *read_file(char *path)
             return NULL;
         }    
 
-        // Assign the reallocated memory back to entry_list
-        entry_list = temp;
         // Copy the data of the current utmp entry to the list
         entry_list[count++] = *utmp_entry;
     }
