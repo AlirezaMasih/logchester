@@ -1,7 +1,5 @@
 #include <stdio.h> // For I/O operations (input/output)
 #include <stdlib.h> // For memory management (malloc, realloc, free)
-#include <fcntl.h> // For file access
-#include <unistd.h> // For reading files
 #include <utmp.h> // For reading utmp files
 
 
@@ -21,6 +19,7 @@ int main()
     // Read the data from the utmp file and store it in the structure
     struct utmp_data *entry = read_file("/var/log/wtmp");
 
+
     // Loop to print the information of each entry in the data
     for(int i = 0; i < entry->length; i++)
     {
@@ -36,6 +35,10 @@ int main()
 
     // End the use of the utmp file
     endutent();
+
+    // Freeing memory to prevent memory leaks.
+    free(entry->data);
+    free(entry);
 
     return 0;
 }
