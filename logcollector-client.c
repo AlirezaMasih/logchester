@@ -1,6 +1,10 @@
 #include <stdio.h> // For I/O operations (input/output)
 #include <stdlib.h> // For memory management (malloc, realloc, free)
 #include <utmp.h> // For reading utmp files
+#include <time.h> // For making time field human readable
+
+
+    
 
 
 // Define the structure utmp_data to store the list of entries and its length
@@ -19,18 +23,18 @@ int main()
     // Read the data from the utmp file and store it in the structure
     struct utmp_data *entry = read_file("/var/log/wtmp");
 
+    char time_buffer[30]; 
 
     // Loop to print the information of each entry in the data
     for(int i = 0; i < entry->length; i++)
     {
-        // Print the details of each entry from the utmp file
-        printf("Type: %d\n", entry->data[i].ut_type);
-        printf("User: %s\n", entry->data[i].ut_user);
-        printf("TTY : %s\n", entry->data[i].ut_line);
-        printf("Host: %s\n", entry->data[i].ut_host);
-        printf("PID : %d\n", entry->data[i].ut_pid);
-        printf("Time: %u\n", entry->data[i].ut_tv.tv_sec);
-        printf("---------------------------\n");
+
+        time_t time = (time_t)(entry->data[i].ut_tv.tv_sec);
+
+        struct tm *time_info = localtime(&time);
+        strftime(time_buffer , sizeof(time_buffer) , "%a %b %e %H:%M" , time_info);
+        
+        printf("%-10s%-10s%-25s%-10s  Runlevel: %u\n" , entry->data[i].ut_user , entry->data[i].ut_line , entry->data[i].ut_host , time_buffer , entry->data[i].ut_type);
     }
 
     // End the use of the utmp file
