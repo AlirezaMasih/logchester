@@ -3,6 +3,7 @@
 #include <utmp.h> // For reading utmp files
 #include <time.h> // For making time field human readable
 #include <string.h>
+#include <paths.h>
 
 
 #define Empty 0
@@ -31,7 +32,7 @@ void show_time(time_t *time , char *time_buffer_ptr , size_t size);
 int main()
 {
     // Read the data from the utmp file and store it in the structure
-    struct utmp_data *entry = read_file("/var/log/wtmp");
+    struct utmp_data *entry = read_file(_PATH_WTMP);
 
     char time_buffer[17]; 
     char record_type[14];
@@ -81,8 +82,7 @@ int main()
         
     }
 
-    // End the use of the utmp file
-    endutent();
+
 
     // Freeing memory to prevent memory leaks.
     free(entry->data);
@@ -104,6 +104,7 @@ struct utmp_data *read_file(char *path)
 
     // Open the utmp file and prepare to read from it
     utmpname(path);  // Open the wtmp file from /var/log as a read-only file
+                     
     setutent(); // Start reading the data from the utmp file
 
 
@@ -129,6 +130,9 @@ struct utmp_data *read_file(char *path)
     // Assign the list of entries and the total number of entries to the structure to be returned
     Returning_Data->data = entry_list;
     Returning_Data->length = count;
+
+    // End the use of the utmp file
+    endutent();
 
     // Return the structure containing the list of data and the count of entries
     return Returning_Data;
