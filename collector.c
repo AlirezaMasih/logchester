@@ -46,11 +46,12 @@ struct utmp_data *read_file(char *path)
     return Returning_Data;
 }
                 
-void show_time(time_t *time , char *time_buffer_ptr , size_t size)
+void show_time(uint32_t *input_time , char *time_buffer_ptr , size_t size)
 {
 
+    time_t time = (time_t)*input_time;
                 
-    struct tm *time_info = localtime(time);
+    struct tm *time_info = localtime(&time);
     strftime(time_buffer_ptr , size , "%a %b %e %H:%M" , time_info);
 
  
