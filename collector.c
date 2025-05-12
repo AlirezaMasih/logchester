@@ -33,6 +33,7 @@ struct utmp_data *read_file(char *path)
                 
         // Store the current utmp entry into the list
         entry_list[count++] = *utmp_entry;
+
     }
                 
     // Assign the list of entries and the total number of entries to the structure to be returned

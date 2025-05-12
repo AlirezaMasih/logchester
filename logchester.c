@@ -1,5 +1,6 @@
 #include "collector.h"
 
+/*
 #define Empty 0
 #define RunLevel 1
 #define BootTime 2
@@ -9,12 +10,15 @@
 #define LoginProcess 6 
 #define UserProcess 7
 #define DeadProcess 8
+*/
 
 
 int main()
 {
     // Read the data from the utmp file and store it in the structure
     struct utmp_data *entry = read_file(_PATH_WTMP);
+    struct utmp *data = entry->data;
+    
 
     char time_buffer[17]; 
     short record_type;
@@ -35,15 +39,14 @@ int main()
     for(int i = 0; i < entry->length; i++)
     {
 
-        show_time(&entry->data[i].ut_tv.tv_sec , time_buffer , sizeof(time_buffer));
+        show_time(&data[i].ut_tv.tv_sec , time_buffer , sizeof(time_buffer));
 
 
-        record_type = entry->data[i].ut_type;
+        record_type = data[i].ut_type;
 
+        printf("%-10s%-8s%-25s%-25s%-30s\n" , data[i].ut_user , data[i].ut_line , data[i].ut_host , time_buffer , record_types[record_type]);
 
-    
-        printf("%-10s%-8s%-25s%-25s%-30s\n" , entry->data[i].ut_user , entry->data[i].ut_line , entry->data[i].ut_host , time_buffer , record_types[record_type]);
-        
+       
         
     }
 
