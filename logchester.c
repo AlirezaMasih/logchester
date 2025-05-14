@@ -17,7 +17,7 @@ int main()
 {
     // Read the data from the utmp file and store it in the structure
     struct utmp_data *entry = read_file(_PATH_WTMP);
-    struct utmp *data = entry->data;
+    struct session_data *data = entry->data;
     
 
     char time_buffer[17]; 
@@ -39,7 +39,7 @@ int main()
     for(int i = 0; i < entry->length; i++)
     {
 
-        show_time(&data[i].ut_tv.tv_sec , time_buffer , sizeof(time_buffer));
+        show_time(&data[i].tv_sec , time_buffer , sizeof(time_buffer));
 
 
         record_type = data[i].ut_type;

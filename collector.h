@@ -8,11 +8,23 @@
 #include <paths.h>
 #include <stdint.h>
 
+
+struct session_data
+{
+    char ut_user[33];
+    char ut_host[33];
+    char ut_line[33];
+    char login_amount[10];
+    char logout[10];
+    short ut_type;
+    uint32_t tv_sec;
+};
+
 // Define the structure utmp_data to store the list of entries and its length
 struct utmp_data
 {
-    struct utmp *data; // Array to store the utmp structures
     int length; // Number of entries in the array
+    struct session_data *data; // Array to store the utmp structures
 };
 
 // Function declaration to read the utmp file and return the data in a utmp_data structure
