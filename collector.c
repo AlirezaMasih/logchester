@@ -9,10 +9,11 @@ struct utmp_data *read_file(char *path)
     struct session_data *entry_list = NULL; // Array to store all the entries read from the file
     struct session_data utmp_entry_formatted;
 
-    strcpy(utmp_entry_formatted.logout , "still");
-    strcpy(utmp_entry_formatted.login_amount , "login");
+    //strcpy(utmp_entry_formatted.logout , "still");
+    //strcpy(utmp_entry_formatted.login_amount , "login");
 
     int count = 0; // Keep track of the number of entries
+    uint32_t offset;
 
     // Open the utmp file and prepare to read from it
     utmpname(path);  // Open the wtmp file from /var/log as a read-only file
@@ -40,18 +41,14 @@ struct utmp_data *read_file(char *path)
         {
             entry_list[count++] = *utmp_entry;
         }*/
-        strncpy(utmp_entry_formatted.ut_user , utmp_entry->ut_user , 32); 
-        strncpy(utmp_entry_formatted.ut_host , utmp_entry->ut_host , 32); 
-        strncpy(utmp_entry_formatted.ut_line , utmp_entry->ut_line , 32); 
+        //show_time(&utmp_entry->tv_sec , time_buffer , sizeof(time_buffer));
+        strncpy(utmp_entry_formatted.ut_user , utmp_entry->ut_user , 10); 
+        strncpy(utmp_entry_formatted.ut_host , utmp_entry->ut_host , 25); 
+        strncpy(utmp_entry_formatted.ut_line , utmp_entry->ut_line , 25); 
         utmp_entry_formatted.ut_type = utmp_entry->ut_type; 
         utmp_entry_formatted.tv_sec = utmp_entry->ut_tv.tv_sec;
 
-
         entry_list[count++] = utmp_entry_formatted;
-
-
-
-          
 
     }
             
@@ -66,13 +63,66 @@ struct utmp_data *read_file(char *path)
     return Returning_Data;
 }
                 
-void show_time(uint32_t *input_time , char *time_buffer_ptr , size_t size)
+struct session_time *show_time(time_t login_time , time_t logout_time , time_t login_duration)
 {
+    struct session_time *time_data = malloc(sizeof(struct session_time));
+    
+    char *login = malloc(18 * sizeof(char));
+    char *logout = malloc(30 * sizeof(char));
+    char *login_amount = malloc(30 * sizeof(char));
 
-    time_t time = (time_t)*input_time;
-                
-    struct tm *time_info = localtime(&time);
-    strftime(time_buffer_ptr , size , "%a %b %e %H:%M" , time_info);
+
+    void set_login_time()
+    {
+        
+        struct tm *login_tm= localtime(&login_time);
+        strftime(login , 17 , "%a %b %e %H:%M" , login_tm);
+        //time_data->login_time = login;
+        strcpy(time_data->login_time , login);
+
+
+    }        
+    
+    
+    //struct tm *time_info = localtime(&time);
+    
+    void set_logout_time()
+    {
+        struct tm *logout_tm = localtime(&logout_time);
+        struct tm *login_d_tm = localtime(&login_duration);
+
+        strftime(logout , 30 , "%H:%M" , logout_tm);
+        strftime(login_amount , 30 ,"(%H:%M)" , login_d_tm);
+
+        /* *time_data = (struct session_time){
+
+        
+            .logout_time = logout ,
+            .login_duration = login_amount ,
+    
+        };*/
+        strcpy(time_data->logout_time , logout);
+        strcpy(time_data->login_duration , login_amount);
+
+    }
+    if(logout_time == 0)
+    {
+        set_login_time();
+        strcpy(time_data->logout_time , "(still"); 
+        strcpy(time_data->login_duration , "logged in)");
+
+    }
+    else
+    {
+        set_login_time();
+        set_logout_time();
+    }
+    free(login);
+    free(logout);
+    free(login_amount);
+
+    return time_data;
+    
 
  
 }

@@ -11,11 +11,9 @@
 
 struct session_data
 {
-    char ut_user[33];
-    char ut_host[33];
-    char ut_line[33];
-    char login_amount[10];
-    char logout[10];
+    char ut_user[11];
+    char ut_host[26];
+    char ut_line[26];
     short ut_type;
     uint32_t tv_sec;
 };
@@ -27,8 +25,13 @@ struct utmp_data
     struct session_data *data; // Array to store the utmp structures
 };
 
+struct session_time
+{
+    char login_duration[50];
+    char logout_time[50];
+    char login_time[50];
+};
+
 // Function declaration to read the utmp file and return the data in a utmp_data structure
 struct utmp_data *read_file(char *path);
-void show_time(uint32_t *input_time , char *time_buffer_ptr , size_t size);
-
-
+struct session_time *show_time(time_t login_time , time_t logout_time , time_t login_duration);
