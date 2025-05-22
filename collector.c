@@ -73,8 +73,14 @@ struct session_time *show_time(time_t login_time , time_t logout_time)
     if(logout_time == 0)
     {
         set_login_time(login_time , login , time_data);
-        strcpy(time_data->logout_time , ""); 
+        strcpy(time_data->logout_time , "still"); 
         //strcpy(time_data->login_duration , "logged in)");
+
+    }
+    else if(logout_time == 1)
+    {
+        set_login_time(login_time , login , time_data);
+        strcpy(time_data->logout_time , "crash");
 
     }
     else

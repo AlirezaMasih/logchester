@@ -40,83 +40,67 @@ int main()
         "DEAD_PROCESS"  // 8
     };
     // Loop to print the information of each entry in the data
-    for(int i = entry->length - 1; i >= 0 ; i--)
+    for(int i = 0; i < entry->length ; i++)
     {
 
         
-
-
         record_type = data[i].ut_type;
 
-        if(strcmp(data[i].ut_user , "shutdown") == 0)
-        {
-            endCounter = 1;
-            while((i - endCounter) >= 0 && data[i - endCounter].ut_type != 1)
-            {
-                    
-                if(strcmp(data[i - endCounter].ut_host , "login screen")== 0 && (i - endCounter) != repeat)
-                {
-                    session_time_info = show_time((time_t)data[i - endCounter].tv_sec , 0);
+        if(data[i].ut_type == 2)
+        {   
+           endCounter = 1;
+           while((i + endCounter) <= entry->length)
+           {
+               if(i + endCounter >= entry->length)
+               {
+                    session_time_info = show_time((time_t)data[i].tv_sec , 0);
 
-                    printf("%-12s%-12s%-27s%-17s- %-8s%-30s\n", 
-                            data[i - endCounter].ut_user,
-                            data[i - endCounter].ut_line,
-                            data[i - endCounter].ut_host,
+                    printf("%-12s%-12s%-27s%-17s- %-8s%-30s\n",
+                            data[i].ut_user,
+                            data[i].ut_line,
+                            data[i].ut_host,
                             session_time_info->login_time,
-                            "Down",
-                            record_types[data[i - endCounter].ut_type]);
-                    repeat = i - endCounter;
-    
+                            session_time_info->logout_time,
+                            record_types[data[i].ut_type]);
                     free(session_time_info);
-                }
-                else if(data[i - endCounter].ut_type == 8 )
-                {
-                    innerCounter = 1;
-                    while((i - endCounter - innerCounter) >= 0 && (i - endCounter - innerCounter) != repeat)
-                    {
-                                
-                    if((strcmp(data[i - endCounter].ut_line , data[i - endCounter - innerCounter].ut_line) == 0 && 
-                        strcmp(data[i - endCounter].ut_host , data[i - endCounter - innerCounter].ut_host) == 0 )
-                      ||
-                        (strcmp(data[i - endCounter].ut_line , data[i - endCounter - innerCounter].ut_line) == 0 && 
-                         strcmp(data[i - endCounter].ut_user , data[i - endCounter - innerCounter].ut_user) == 0))
-                      
-                        {
-                            session_time_info = show_time((time_t)data[i - endCounter - innerCounter].tv_sec , (time_t)data[i - endCounter].tv_sec );
-                            printf("%-12s%-12s%-27s%-17s- %-8s%-30s\n",
-                                data[i - endCounter - innerCounter].ut_user,
-                                data[i - endCounter - innerCounter].ut_line,
-                                data[i - endCounter - innerCounter].ut_host,
-                                session_time_info->login_time,
-                                session_time_info->logout_time,
-                                record_types[data[i - endCounter - innerCounter].ut_type]);
-                            repeat = i - endCounter - innerCounter;
+                    break;
+
+               }
+
+               else if(data[i + endCounter].ut_type == 2)
+               {
+                    session_time_info = show_time((time_t)data[i].tv_sec , 1);
+
+                    printf("%-12s%-12s%-27s%-17s- %-8s%-30s\n",
+                            data[i].ut_user,
+                            data[i].ut_line,
+                            data[i].ut_host,
+                            session_time_info->login_time,
+                            session_time_info->logout_time,
+                            record_types[data[i].ut_type]);
+                    free(session_time_info);
+                    break;
     
-                                break;
-                         }
-                    
-                        innerCounter++;
-                    }
-                }
-                
-                else if(data[i - endCounter].ut_type == 7 && (i - endCounter) != repeat) 
-                {
-                            session_time_info = show_time((time_t)data[i - endCounter].tv_sec , (time_t)data[i].tv_sec );
-                            printf("%-12s%-12s%-27s%-17s- %-8s%-30s\n",
-                                data[i - endCounter].ut_user,
-                                data[i - endCounter].ut_line,
-                                data[i - endCounter].ut_host,
-                                session_time_info->login_time,
-                                session_time_info->logout_time,
-                                record_types[data[i - endCounter].ut_type]);
-                            repeat = i - endCounter;
-
-
                 }
 
-                
+               else if(strcmp(data[i + endCounter].ut_user , "shutdown") == 0)
+               {
+                session_time_info = show_time((time_t)data[i].tv_sec , (time_t)data[i + endCounter].tv_sec);
+        
+                printf("%-12s%-12s%-27s%-17s- %-8s%-30s\n",
+                        data[i].ut_user,
+                        data[i].ut_line,
+                        data[i].ut_host,
+                        session_time_info->login_time,
+                        session_time_info->logout_time,
+                        record_types[data[i].ut_type]);
+                free(session_time_info);
+                break;
+               } 
+ 
                 endCounter++;
-            }
+               
+           }
         }
 
         
