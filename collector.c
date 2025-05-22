@@ -29,7 +29,6 @@ struct utmp_data *read_file(char *path)
         if(entry_list == NULL)
         {
             // If realloc fails, free the previously allocated memory and print an error
-            free(entry_list);
             free(Returning_Data);
             perror("Memory allocation failed.");
             endutent();
@@ -82,6 +81,11 @@ struct session_time *show_time(time_t login_time , time_t logout_time)
         set_login_time(login_time , login , time_data);
         strcpy(time_data->logout_time , "crash");
 
+    }
+    else if(logout_time == 2)
+    {
+        set_login_time(login_time , login , time_data);
+        strcpy(time_data->logout_time , "down");
     }
     else
     {
