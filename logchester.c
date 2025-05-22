@@ -51,7 +51,7 @@ int main()
            endCounter = 1;
            while((i + endCounter) <= entry->length)
            {
-               if(i + endCounter >= entry->length)
+               if(i + endCounter == entry->length)
                {
                     session_time_info = show_time((time_t)data[i].tv_sec , 0);
 
@@ -69,7 +69,7 @@ int main()
 
                else if(data[i + endCounter].ut_type == 2)
                {
-                    session_time_info = show_time((time_t)data[i].tv_sec , 1);
+                    session_time_info = show_time((time_t)data[i].tv_sec , 1);// 1 means crash
 
                     printf("%-12s%-12s%-27s%-17s- %-8s%-30s\n",
                             data[i].ut_user,
@@ -85,26 +85,93 @@ int main()
 
                else if(strcmp(data[i + endCounter].ut_user , "shutdown") == 0)
                {
-                session_time_info = show_time((time_t)data[i].tv_sec , (time_t)data[i + endCounter].tv_sec);
+                    session_time_info = show_time((time_t)data[i].tv_sec , (time_t)data[i + endCounter].tv_sec);
         
-                printf("%-12s%-12s%-27s%-17s- %-8s%-30s\n",
-                        data[i].ut_user,
-                        data[i].ut_line,
-                        data[i].ut_host,
-                        session_time_info->login_time,
-                        session_time_info->logout_time,
-                        record_types[data[i].ut_type]);
-                free(session_time_info);
-                break;
+                    printf("%-12s%-12s%-27s%-17s- %-8s%-30s\n",
+                            data[i].ut_user,
+                            data[i].ut_line,
+                            data[i].ut_host,
+                            session_time_info->login_time,
+                            session_time_info->logout_time,
+                            record_types[data[i].ut_type]);
+                    free(session_time_info);
+                    break;
                } 
  
                 endCounter++;
                
            }
+
         }
+        
+        else if(data[i].ut_type == 7)
+        {          
+            endCounter = 1;
+            while((i + endCounter) <= entry->length)
+            {
+                if((i + endCounter) == entry->length)
+                {
+                    session_time_info = show_time((time_t)data[i].tv_sec , 0); // 0 means still 
+                    printf("%-12s%-12s%-27s%-17s- %-8s%-30s\n",
+                            data[i].ut_user,
+                            data[i].ut_line,
+                            data[i].ut_host,
+                            session_time_info->login_time,
+                            session_time_info->logout_time,
+                            record_types[data[i].ut_type]);
+                    free(session_time_info);
+                    break;
+
+
+                }
+                else if(strcmp(data[i + endCounter].ut_user , "shutdown") == 0)
+                {
+                    session_time_info = show_time((time_t)data[i].tv_sec , 2); //2 means down
+
+                    printf("%-12s%-12s%-27s%-17s- %-8s%-30s\n",
+                            data[i].ut_user,
+                            data[i].ut_line,
+                            data[i].ut_host,
+                            session_time_info->login_time,
+                            session_time_info->logout_time,
+                            record_types[data[i].ut_type]);
+                    free(session_time_info);
+                    break;
+
+                }
+                else if(data[i + endCounter].ut_type == 8)
+                {                    
+                        if((strcmp(data[i].ut_line , data[i + endCounter].ut_line) == 0 && 
+                            strcmp(data[i].ut_host , data[i + endCounter].ut_host) == 0 )
+                          ||
+                            (strcmp(data[i].ut_line , data[i + endCounter].ut_line) == 0 && 
+                             strcmp(data[i].ut_user , data[i + endCounter].ut_user) == 0))
+
+                        {
+                                session_time_info = show_time((time_t)data[i].tv_sec , (time_t)data[i + endCounter].tv_sec);
+        
+                                printf("%-12s%-12s%-27s%-17s- %-8s%-30s\n",
+                                    data[i].ut_user,
+                                    data[i].ut_line,
+                                    data[i].ut_host,
+                                    session_time_info->login_time,
+                                    session_time_info->logout_time,
+                                    record_types[data[i].ut_type]);
+                                free(session_time_info);
+                                break;
+    
+                        }
+                }
+                endCounter++;
+            }
+
+
+        }
+        
 
         
-        
+ 
+       
     }
 
     
