@@ -13,7 +13,6 @@
 #define DeadProcess 8
 */
 
-
 int main()
 {
     // Read the data from the utmp file and store it in the structure
@@ -21,41 +20,46 @@ int main()
     struct session_data *data = entry->data;
     struct session_time *session_time_info;
     
-
-    //char time_buffer[17]; 
+    // Declare variables
     short record_type;
     int endCounter = 0;
     int innerCounter = 0;
     int repeat = -1;
     uint32_t time_offset;
  
+    // Array holding different record types as strings for easier reference
     char record_types[9][14] = {
         "EMPTY",         // 0
         "RUN_LVL",       // 1
-        "BOOT_TIME",    // 2
+        "BOOT_TIME",     // 2
         "NEW_TIME",      // 3
         "OLD_TIME",      // 4
         "INIT_PROCESS",  // 5
         "LOGIN_PROCESS", // 6
-        "USER_PROCESS", // 7
-        "DEAD_PROCESS"  // 8
+        "USER_PROCESS",  // 7
+        "DEAD_PROCESS"   // 8
     };
-    // Loop to print the information of each entry in the data
-    for(int i = 0; i < entry->length ; i++)
-    {
 
-        
+    // Loop through each entry in the data
+    for(int i = 0; i < entry->length; i++)
+    {
+        // Get the record type for the current entry
         record_type = data[i].ut_type;
 
+        // If the record is of type BOOT_TIME (2)
         if(data[i].ut_type == 2)
         {   
            endCounter = 1;
+           
+           // Loop to handle entries following the current one, looking for a matching or shutdown entry
            while((i + endCounter) <= entry->length)
            {
                if(i + endCounter == entry->length)
                {
+                    // Call show_time with 0 (no crash)
                     session_time_info = show_time((time_t)data[i].tv_sec , 0);
 
+                    // Print formatted information
                     printf("%-12s%-12s%-27s%-17s- %-8s%-30s\n",
                             data[i].ut_user,
                             data[i].ut_line,
@@ -63,15 +67,16 @@ int main()
                             session_time_info->login_time,
                             session_time_info->logout_time,
                             record_types[data[i].ut_type]);
-                    free(session_time_info);
+                    free(session_time_info);  // Free allocated memory
                     break;
-
                }
 
+               // If the next entry is a BOOT_TIME (crash)
                else if(data[i + endCounter].ut_type == 2)
                {
-                    session_time_info = show_time((time_t)data[i].tv_sec , 1);// 1 means crash
+                    session_time_info = show_time((time_t)data[i].tv_sec , 1); // 1 means crash
 
+                    // Print formatted information
                     printf("%-12s%-12s%-27s%-17s- %-8s%-30s\n",
                             data[i].ut_user,
                             data[i].ut_line,
@@ -79,15 +84,16 @@ int main()
                             session_time_info->login_time,
                             session_time_info->logout_time,
                             record_types[data[i].ut_type]);
-                    free(session_time_info);
+                    free(session_time_info);  // Free allocated memory
                     break;
-    
                 }
 
+               // If the next entry is a shutdown process
                else if(strcmp(data[i + endCounter].ut_user , "shutdown") == 0)
                {
                     session_time_info = show_time((time_t)data[i].tv_sec , (time_t)data[i + endCounter].tv_sec);
         
+                    // Print formatted information
                     printf("%-12s%-12s%-27s%-17s- %-8s%-30s\n",
                             data[i].ut_user,
                             data[i].ut_line,
@@ -95,7 +101,7 @@ int main()
                             session_time_info->login_time,
                             session_time_info->logout_time,
                             record_types[data[i].ut_type]);
-                    free(session_time_info);
+                    free(session_time_info);  // Free allocated memory
                     break;
                } 
  
@@ -105,14 +111,18 @@ int main()
 
         }
         
+        // If the record is of type USER_PROCESS (7)
         else if(data[i].ut_type == 7)
         {          
             endCounter = 1;
+
+            // Loop to handle subsequent entries and identify end of user session
             while((i + endCounter) <= entry->length)
             {
                 if((i + endCounter) == entry->length)
                 {
-                    session_time_info = show_time((time_t)data[i].tv_sec , 0); // 0 means still 
+                    // Call show_time with 0 (still logged in)
+                    session_time_info = show_time((time_t)data[i].tv_sec , 0);
                     printf("%-12s%-12s%-27s%-17s- %-8s%-30s\n",
                             data[i].ut_user,
                             data[i].ut_line,
@@ -120,15 +130,15 @@ int main()
                             session_time_info->login_time,
                             session_time_info->logout_time,
                             record_types[data[i].ut_type]);
-                    free(session_time_info);
+                    free(session_time_info);  // Free allocated memory
                     break;
-
-
                 }
+                // If the next entry is a shutdown process
                 else if(strcmp(data[i + endCounter].ut_user , "shutdown") == 0)
                 {
-                    session_time_info = show_time((time_t)data[i].tv_sec , 2); //2 means down
+                    session_time_info = show_time((time_t)data[i].tv_sec , 2); // 2 means down
 
+                    // Print formatted information
                     printf("%-12s%-12s%-27s%-17s- %-8s%-30s\n",
                             data[i].ut_user,
                             data[i].ut_line,
@@ -136,21 +146,23 @@ int main()
                             session_time_info->login_time,
                             session_time_info->logout_time,
                             record_types[data[i].ut_type]);
-                    free(session_time_info);
+                    free(session_time_info);  // Free allocated memory
                     break;
-
                 }
+                // If the next record is of type DEAD_PROCESS (8)
                 else if(data[i + endCounter].ut_type == 8)
                 {                    
-                        if((strcmp(data[i].ut_line , data[i + endCounter].ut_line) == 0 && 
-                            strcmp(data[i].ut_host , data[i + endCounter].ut_host) == 0 )
-                          ||
-                            (strcmp(data[i].ut_line , data[i + endCounter].ut_line) == 0 && 
-                             strcmp(data[i].ut_user , data[i + endCounter].ut_user) == 0))
+                    // Check if the user, line, or host match
+                    if((strcmp(data[i].ut_line , data[i + endCounter].ut_line) == 0 && 
+                        strcmp(data[i].ut_host , data[i + endCounter].ut_host) == 0 )
+                      ||
+                        (strcmp(data[i].ut_line , data[i + endCounter].ut_line) == 0 && 
+                         strcmp(data[i].ut_user , data[i + endCounter].ut_user) == 0))
 
                         {
                                 session_time_info = show_time((time_t)data[i].tv_sec , (time_t)data[i + endCounter].tv_sec);
         
+                                // Print formatted information
                                 printf("%-12s%-12s%-27s%-17s- %-8s%-30s\n",
                                     data[i].ut_user,
                                     data[i].ut_line,
@@ -158,26 +170,16 @@ int main()
                                     session_time_info->login_time,
                                     session_time_info->logout_time,
                                     record_types[data[i].ut_type]);
-                                free(session_time_info);
+                                free(session_time_info);  // Free allocated memory
                                 break;
-    
                         }
                 }
                 endCounter++;
             }
-
-
         }
-        
-
-        
- 
-       
     }
 
-    
-
-    // Freeing memory to prevent memory leaks.
+    // Free memory for the data and entry structures to prevent memory leaks
     free(entry->data);
     free(entry);
 
