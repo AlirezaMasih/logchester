@@ -21,10 +21,8 @@ int main()
     struct session_time *session_time_info;
     
     // Declare variables
-    short record_type;
     int endCounter = 0;
     int innerCounter = 0;
-    int repeat = -1;
     uint32_t time_offset;
  
     // Array holding different record types as strings for easier reference
@@ -40,11 +38,9 @@ int main()
         "DEAD_PROCESS"   // 8
     };
 
-    // Loop through each entry in the data
     for(int i = 0; i < entry->length; i++)
     {
         // Get the record type for the current entry
-        record_type = data[i].ut_type;
 
         // If the record is of type BOOT_TIME (2)
         if(data[i].ut_type == 2)
@@ -57,7 +53,7 @@ int main()
                if(i + endCounter == entry->length)
                {
                     // Call show_time with 0 (no crash)
-                    session_time_info = show_time((time_t)data[i].tv_sec , 0);
+                    session_time_info = show_time((time_t)data[i].tv_sec , (time_t)data[i + endCounter].tv_sec , 0);
 
                     // Print formatted information
                     printf("%-12s%-12s%-27s%-17s- %-8s%-30s\n",
@@ -74,7 +70,7 @@ int main()
                // If the next entry is a BOOT_TIME (crash)
                else if(data[i + endCounter].ut_type == 2)
                {
-                    session_time_info = show_time((time_t)data[i].tv_sec , 1); // 1 means crash
+                    session_time_info = show_time((time_t)data[i].tv_sec , (time_t)data[i + endCounter].tv_sec , 1); // 1 means crash
 
                     // Print formatted information
                     printf("%-12s%-12s%-27s%-17s- %-8s%-30s\n",
@@ -91,15 +87,16 @@ int main()
                // If the next entry is a shutdown process
                else if(strcmp(data[i + endCounter].ut_user , "shutdown") == 0)
                {
-                    session_time_info = show_time((time_t)data[i].tv_sec , (time_t)data[i + endCounter].tv_sec);
+                    session_time_info = show_time((time_t)data[i].tv_sec , (time_t)data[i + endCounter].tv_sec , 4);
         
                     // Print formatted information
-                    printf("%-12s%-12s%-27s%-17s- %-8s%-30s\n",
+                    printf("%-12s%-12s%-27s%-17s- %-8s%-30s%-30s\n",
                             data[i].ut_user,
                             data[i].ut_line,
                             data[i].ut_host,
                             session_time_info->login_time,
                             session_time_info->logout_time,
+                            session_time_info->login_duration,
                             record_types[data[i].ut_type]);
                     free(session_time_info);  // Free allocated memory
                     break;
@@ -122,13 +119,14 @@ int main()
                 if((i + endCounter) == entry->length)
                 {
                     // Call show_time with 0 (still logged in)
-                    session_time_info = show_time((time_t)data[i].tv_sec , 0);
-                    printf("%-12s%-12s%-27s%-17s- %-8s%-30s\n",
+                    session_time_info = show_time((time_t)data[i].tv_sec , (time_t)data[i + endCounter].tv_sec , 0);
+                    printf("%-12s%-12s%-27s%-17s- %-8s%-30s%-30s\n",
                             data[i].ut_user,
                             data[i].ut_line,
                             data[i].ut_host,
                             session_time_info->login_time,
                             session_time_info->logout_time,
+                            session_time_info->login_duration,
                             record_types[data[i].ut_type]);
                     free(session_time_info);  // Free allocated memory
                     break;
@@ -136,15 +134,16 @@ int main()
                 // If the next entry is a shutdown process
                 else if(strcmp(data[i + endCounter].ut_user , "shutdown") == 0)
                 {
-                    session_time_info = show_time((time_t)data[i].tv_sec , 2); // 2 means down
+                    session_time_info = show_time((time_t)data[i].tv_sec , (time_t)data[i + endCounter].tv_sec , 2); // 2 means down
 
                     // Print formatted information
-                    printf("%-12s%-12s%-27s%-17s- %-8s%-30s\n",
+                    printf("%-12s%-12s%-27s%-17s- %-8s%-30s%-30s\n",
                             data[i].ut_user,
                             data[i].ut_line,
                             data[i].ut_host,
                             session_time_info->login_time,
                             session_time_info->logout_time,
+                            session_time_info->login_duration,
                             record_types[data[i].ut_type]);
                     free(session_time_info);  // Free allocated memory
                     break;
@@ -160,15 +159,16 @@ int main()
                          strcmp(data[i].ut_user , data[i + endCounter].ut_user) == 0))
 
                         {
-                                session_time_info = show_time((time_t)data[i].tv_sec , (time_t)data[i + endCounter].tv_sec);
+                                session_time_info = show_time((time_t)data[i].tv_sec , (time_t)data[i + endCounter].tv_sec , 4);
         
                                 // Print formatted information
-                                printf("%-12s%-12s%-27s%-17s- %-8s%-30s\n",
+                                printf("%-12s%-12s%-27s%-17s- %-8s%-30s%-30s\n",
                                     data[i].ut_user,
                                     data[i].ut_line,
                                     data[i].ut_host,
                                     session_time_info->login_time,
                                     session_time_info->logout_time,
+                                    session_time_info->login_duration,
                                     record_types[data[i].ut_type]);
                                 free(session_time_info);  // Free allocated memory
                                 break;
