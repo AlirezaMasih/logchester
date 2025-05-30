@@ -8,6 +8,7 @@
 #include <paths.h> // For standard system paths
 #include <stdint.h> // For using fixed-width integers
 
+
 // Define the structure 'session_data' to hold the session information
 struct session_data
 {

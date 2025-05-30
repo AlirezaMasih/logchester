@@ -1,12 +1,11 @@
-#pragma once
-
-#include <time.h>  // For handling time-related operations
-#include <string.h> // For string manipulation (e.g., strcpy, strncpy)
-#include <stdlib.h> // For memory allocation functions (e.g., malloc)
-#include <stdint.h>
-#include <stdio.h>
-
 // Define the structure to hold session time information
+#pragma once 
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
+#include <time.h>
+
 struct session_time
 {
     // Store the formatted login time as a string
