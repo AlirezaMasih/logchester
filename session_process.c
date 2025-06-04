@@ -41,7 +41,7 @@ void session_handle(struct utmp_data *entry)
                if(i + endCounter == entry->length)
                {
                     // Call show_time with 0 (no crash)
-                    session_time_info = show_time((time_t)data[i].tv_sec , (time_t)data[i + endCounter].tv_sec , 0);
+                    session_time_info = show_time((time_t)data[i].tv_sec , 0 , 0);
 
                     // Print formatted information
                     fprintf(log_file , "%-12s%-12s%-27s%-17s- %-8s%-30s\n",
@@ -107,7 +107,7 @@ void session_handle(struct utmp_data *entry)
                 if((i + endCounter) == entry->length)
                 {
                     // Call show_time with 0 (still logged in)
-                    session_time_info = show_time((time_t)data[i].tv_sec , (time_t)data[i + endCounter].tv_sec , 0);
+                    session_time_info = show_time((time_t)data[i].tv_sec , 0 , 0);
                     fprintf(log_file , "%-12s%-12s%-27s%-17s- %-8s%-30s%-30s\n",
                             data[i].ut_user,
                             data[i].ut_line,
