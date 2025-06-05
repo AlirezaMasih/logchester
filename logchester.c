@@ -1,7 +1,5 @@
-#include "collector.h"
-#include "datetime.h"
 #include "session_process.h"
-
+#include "send_data.h"
 /*
 #define Empty 0
 #define RunLevel 1
@@ -19,6 +17,8 @@ int main()
     // Read the data from the utmp file and store it in the structure
     struct utmp_data *entry = read_file(_PATH_WTMP);
     session_handle(entry);
+
+    send_file();
     return 0;
 }
 

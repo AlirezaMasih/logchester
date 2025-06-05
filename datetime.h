@@ -1,5 +1,6 @@
 // Define the structure to hold session time information
 #pragma once 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
