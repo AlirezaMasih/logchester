@@ -44,7 +44,7 @@ void session_handle(struct utmp_data *entry)
                     session_time_info = show_time((time_t)data[i].tv_sec , 0 , 0);
 
                     // Print formatted information
-                    fprintf(log_file , "%-12s%-12s%-27s%-17s- %-8s%-30s\n",
+                    fprintf(log_file , "%-12s%-12s%-27s%-17s- %-10s%-12s\n",
                             data[i].ut_user,
                             data[i].ut_line,
                             data[i].ut_host,
@@ -61,7 +61,7 @@ void session_handle(struct utmp_data *entry)
                     session_time_info = show_time((time_t)data[i].tv_sec , (time_t)data[i + endCounter].tv_sec , 1); // 1 means crash
 
                     // Print formatted information
-                    fprintf(log_file , "%-12s%-12s%-27s%-17s- %-8s%-30s\n",
+                    fprintf(log_file , "%-12s%-12s%-27s%-17s- %-10s%-12s\n",
                             data[i].ut_user,
                             data[i].ut_line,
                             data[i].ut_host,
@@ -78,7 +78,7 @@ void session_handle(struct utmp_data *entry)
                     session_time_info = show_time((time_t)data[i].tv_sec , (time_t)data[i + endCounter].tv_sec , 4);
 
                     // Print formatted information
-                    fprintf(log_file , "%-12s%-12s%-27s%-17s- %-8s%-30s%-30s\n",
+                    fprintf(log_file , "%-12s%-12s%-27s%-17s- %-10s%-12s%-30s\n",
                             data[i].ut_user,
                             data[i].ut_line,
                             data[i].ut_host,
@@ -108,7 +108,7 @@ void session_handle(struct utmp_data *entry)
                 {
                     // Call show_time with 0 (still logged in)
                     session_time_info = show_time((time_t)data[i].tv_sec , 0 , 0);
-                    fprintf(log_file , "%-12s%-12s%-27s%-17s- %-8s%-30s%-30s\n",
+                    fprintf(log_file , "%-12s%-12s%-27s%-17s- %-10s%-12s%-30s\n",
                             data[i].ut_user,
                             data[i].ut_line,
                             data[i].ut_host,
@@ -125,7 +125,7 @@ void session_handle(struct utmp_data *entry)
                     session_time_info = show_time((time_t)data[i].tv_sec , (time_t)data[i + endCounter].tv_sec , 2); // 2 means down
 
                     // Print formatted information
-                    fprintf(log_file , "%-12s%-12s%-27s%-17s- %-8s%-30s%-30s\n",
+                    fprintf(log_file , "%-12s%-12s%-27s%-17s- %-10s%-12s%-30s\n",
                             data[i].ut_user,
                             data[i].ut_line,
                             data[i].ut_host,
@@ -150,7 +150,7 @@ void session_handle(struct utmp_data *entry)
                                 session_time_info = show_time((time_t)data[i].tv_sec , (time_t)data[i + endCounter].tv_sec , 4);
 
                                 // Print formatted information
-                                fprintf(log_file , "%-12s%-12s%-27s%-17s- %-8s%-30s%-30s\n",
+                                fprintf(log_file , "%-12s%-12s%-27s%-17s- %-10s%-12s%-30s\n",
                                     data[i].ut_user,
                                     data[i].ut_line,
                                     data[i].ut_host,
