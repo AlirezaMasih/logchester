@@ -55,3 +55,9 @@ struct utmp_data *read_file(char *path)
     return Returning_Data;
 }
 
+void collector_free(struct utmp_data *entry)
+{
+    free(entry->data);
+    free(entry);
+    
+}
