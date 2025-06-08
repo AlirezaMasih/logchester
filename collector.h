@@ -28,4 +28,5 @@ struct utmp_data
 // Function declaration to read the utmp file and return the data in a 'utmp_data' structure
 // Reads the utmp file from the specified path and returns a structure containing the session data
 struct utmp_data *read_file(char *path);
+void collector_free(struct utmp_data *entry);
 

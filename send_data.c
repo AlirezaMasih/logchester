@@ -1,12 +1,7 @@
 #include "send_data.h"
 
-#define username "masih"                     // Username on the remote server
-#define remote_file "/home/masih/log.txt"    // Path to the file on the remote server
-#define file_path "log.txt"                  // Path to the local file to be sent
-#define password "Alireza.md1383"            // Password for the remote user
-#define hostname "127.0.0.1"                 // IP address of the remote server (localhost in this case)
 
-void send_file()
+void send_file(struct config_data *cfg)
 {
     LIBSSH2_SESSION *session;
     LIBSSH2_SFTP *sftp;
@@ -21,7 +16,7 @@ void send_file()
 
     ninfo.sin_family = AF_INET;                     // Use IPv4
     ninfo.sin_port = htons(22);                    // SSH port
-    ninfo.sin_addr.s_addr = inet_addr(hostname);   // Convert IP string to binary form
+    ninfo.sin_addr.s_addr = inet_addr(cfg->ip);   // Convert IP string to binary form
 
     // Connect to the remote SSH server
     connect(socket_fd , (struct sockaddr *)&ninfo , sizeof(struct sockaddr_in));
@@ -33,16 +28,16 @@ void send_file()
     libssh2_session_handshake(session , socket_fd);
 
     // Authenticate with username and password
-    libssh2_userauth_password(session , username , password);
+    libssh2_userauth_password(session , cfg->username , cfg->password);
 
     // Initialize SFTP session
     sftp = libssh2_sftp_init(session);
 
     // Open the local file for reading
-    int local_file_descriptor = open(file_path , O_RDONLY);
+    int local_file_descriptor = open(cfg->log_file , O_RDONLY);
 
     // Open (or create) the file on the remote server for writing
-    sftp_handle = libssh2_sftp_open(sftp , remote_file , 
+    sftp_handle = libssh2_sftp_open(sftp , cfg->remote_file , 
                                     LIBSSH2_FXF_WRITE | LIBSSH2_FXF_CREAT , 
                                     LIBSSH2_SFTP_S_IRUSR | LIBSSH2_SFTP_S_IWUSR);
 
