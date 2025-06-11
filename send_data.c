@@ -42,7 +42,7 @@ int send_file(struct config_data *cfg)
             fprintf(stderr, "[!] Warning: Password authentication is insecure. Use SSH keys instead.\n");
             cfg->auth_status = 0;
         }
-        else
+        else if(rc != 0 && cfg->auth_status != 0)
         {
             // If both auth methods fail, return error
             printf("Authentication Failed!\n");
