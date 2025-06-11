@@ -35,6 +35,8 @@ int main()
     wd = inotify_add_watch(fd, cfg->utmp_path , IN_MODIFY);  // Watch for modifications to /var/log/wtmp
 
     printf("Started \n");  // Print a message indicating monitoring has started
+                           //
+    cfg->auth_status = 1;
     while(1)  // Infinite loop for continuous monitoring
     {
         // Read events from inotify

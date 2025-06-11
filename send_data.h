@@ -9,4 +9,4 @@
 #include "read_config.h"
 
 
-void send_file();
+int send_file(struct config_data *cfg);

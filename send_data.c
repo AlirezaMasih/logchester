@@ -1,7 +1,7 @@
 #include "send_data.h"
 
 
-void send_file(struct config_data *cfg)
+int send_file(struct config_data *cfg)
 {
     LIBSSH2_SESSION *session;
     LIBSSH2_SFTP *sftp;
@@ -13,6 +13,7 @@ void send_file(struct config_data *cfg)
     // Create a TCP socket for the SSH connection
     int socket_fd = socket(AF_INET , SOCK_STREAM , 0);
     struct sockaddr_in ninfo;
+    int rc;
 
     ninfo.sin_family = AF_INET;                     // Use IPv4
     ninfo.sin_port = htons(22);                    // SSH port
@@ -28,7 +29,24 @@ void send_file(struct config_data *cfg)
     libssh2_session_handshake(session , socket_fd);
 
     // Authenticate with username and password
-    libssh2_userauth_password(session , cfg->username , cfg->password);
+    rc = libssh2_userauth_publickey_fromfile(session, cfg->username, cfg->public_key, cfg->private_key, cfg->passphrase);
+    if(rc != 0)
+    {
+        rc = libssh2_userauth_password(session , cfg->username , cfg->password);
+        if(rc == 0 && cfg->auth_status != 0)
+        {
+            printf("Authentication Succeeded.\n");
+            fprintf(stderr, "[!] Warning: Password authentication is insecure. Use SSH keys instead.\n");
+            cfg->auth_status = 0;
+
+        }
+        else
+        {
+            printf("Authentication Failed!\n");
+            return -1;
+        }
+    }
+    
 
     // Initialize SFTP session
     sftp = libssh2_sftp_init(session);
@@ -66,5 +84,6 @@ void send_file(struct config_data *cfg)
 
     // Exit libssh2 library
     libssh2_exit();
+    return 0;
 }
 

@@ -13,6 +13,10 @@ struct config_data
     char send_to_server[3];
     char remote_file[128];
     char log_file[128];
+    char public_key[128];
+    char private_key[128];
+    char passphrase[64];
+    int auth_status;
 };
 
 
