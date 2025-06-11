@@ -51,6 +51,19 @@ int read_config(const char *filename , struct config_data *cfg)
         {
             strcpy(cfg->log_file , line_buffer + 9);
         }
+        else if(strncmp(line_buffer , "pub_key=" , 8) == 0)
+        {
+            strcpy(cfg->public_key , line_buffer + 8);
+        }
+        else if(strncmp(line_buffer , "pri_key=" , 8) == 0)
+        {
+            strcpy(cfg->private_key , line_buffer + 8);
+        }
+        else if(strncmp(line_buffer , "passphrase=" , 11) == 0)
+        {
+            strcpy(cfg->passphrase , line_buffer + 11);
+        }
+
     }
 
     fclose(config_file);
