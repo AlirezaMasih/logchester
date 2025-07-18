@@ -1,6 +1,7 @@
 #include "session_process.h"  // Header file for session processing functions
 #include "send_data.h"         // Header file for sending data to a server
 #include "read_config.h"
+#include "devlog_collector.h"
 
 #include <sys/inotify.h>       // Library for file system event monitoring
 #include <unistd.h>            // Header for standard symbolic constants and types
@@ -29,6 +30,8 @@ int main()
     int fd, wd, length;   // File descriptor for inotify, watched file descriptor, and length of the data read
 
     char buffer[sizeof(struct inotify_event) + 16];  // Buffer for storing inotify events
+    char devlog_buffer[4096];
+    struct devlog_data *dev_data = devlog_collector("/home/masih/test_socket");
 
     // Initialize inotify for monitoring changes to the /var/log/wtmp file
     fd = inotify_init();  
@@ -40,6 +43,8 @@ int main()
     while(1)  // Infinite loop for continuous monitoring
     {
         // Read events from inotify
+
+        receive_logs(dev_data , devlog_buffer);
         length = read(fd, buffer, sizeof(buffer));
 
         if(length > 0)  // If data was read
