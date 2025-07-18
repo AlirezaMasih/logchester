@@ -22,9 +22,9 @@
 
 int main()
 {
-    struct config_data *cfg = malloc(sizeof(struct config_data)); 
+    struct config_data cfg;
 
-    int rc = read_config(config_file , cfg);
+    int rc = read_config(config_file , &cfg);
 
     int fd, wd, length;   // File descriptor for inotify, watched file descriptor, and length of the data read
 
@@ -32,11 +32,11 @@ int main()
 
     // Initialize inotify for monitoring changes to the /var/log/wtmp file
     fd = inotify_init();  
-    wd = inotify_add_watch(fd, cfg->utmp_path , IN_MODIFY);  // Watch for modifications to /var/log/wtmp
+    wd = inotify_add_watch(fd, cfg.utmp_path , IN_MODIFY);  // Watch for modifications to /var/log/wtmp
 
     printf("Started \n");  // Print a message indicating monitoring has started
                            //
-    cfg->auth_status = 1;
+    cfg.auth_status = 1;
     while(1)  // Infinite loop for continuous monitoring
     {
         // Read events from inotify
@@ -46,23 +46,22 @@ int main()
         {
 
             // Read the data from the wtmp file and store it in the structure
-            struct utmp_data *entry = read_file(cfg->utmp_path);
+            struct utmp_data *entry = read_file(cfg.utmp_path);
             
             // Handle the session data (e.g., login and logout processing)
-            session_handle(entry , cfg);
+            session_handle(entry , &cfg);
 
             // Send the processed data to the server
             
-            if(strlen(cfg->ip) >= 7)
+            if(strlen(cfg.ip) >= 7)
             {
-                send_file(cfg);
+                send_file(&cfg);
             }
         }
         
     }
     
     // Remove the watch on the file and close the inotify file descriptor
-    free(cfg);
     inotify_rm_watch(fd, wd);  
     close(fd);  // Close the inotify file descriptor
 
