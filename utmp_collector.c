@@ -1,4 +1,4 @@
-#include "collector.h"
+#include "utmp_collector.h"
 
 // Function to read the utmp file and return a structure containing the data and its length
 struct utmp_data *read_file(char *path)
@@ -55,7 +55,7 @@ struct utmp_data *read_file(char *path)
     return Returning_Data;
 }
 
-void collector_free(struct utmp_data *entry)
+void utmp_collector_free(struct utmp_data *entry)
 {
     free(entry->data);
     free(entry);
