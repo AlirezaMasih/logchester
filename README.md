@@ -22,7 +22,7 @@ A modular, configurable log collector and session analyzer for Linux, written in
 
 | File/Directory      | Purpose                                                      |
 |--------------------|--------------------------------------------------------------|
-| collector.c/h      | Read utmp/wtmp and collect session data                      |
+| utmp_collector.c/h      | Read utmp/wtmp and collect session data                      |
 | datetime.c/h       | Format and calculate session time/duration                   |
 | read_config.c/h    | Parse configuration file (`logchester.conf`)                 |
 | send_data.c/h      | Send logs to remote server via SSH/SFTP (password or key)    |

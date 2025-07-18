@@ -182,6 +182,6 @@ void session_handle(struct utmp_data *entry , struct config_data *cfg)
 
     // Close the log file and free any dynamically allocated memory
     fclose(log_file);
-    collector_free(entry);        // Free memory for the entry structure
+    utmp_collector_free(entry);        // Free memory for the entry structure
 }
 

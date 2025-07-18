@@ -5,7 +5,7 @@
 
 #pragma once 
 
-#include "collector.h"
+#include "utmp_collector.h"
 #include "datetime.h"
 #include "read_config.h"
 
