@@ -1,3 +1,5 @@
+#pragma once // Ensures this header is included only once during compilation.
+
 // Core SSH functionality (sessions, authentication, etc.)
 #include <libssh2.h>
 
