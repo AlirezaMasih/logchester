@@ -17,6 +17,7 @@ struct config_data
     char public_key[128];    // Path to the public key for key-based authentication
     char private_key[128];   // Path to the private key for key-based authentication
     char passphrase[64];     // Passphrase for the private key, if required
+    char socket_path[128];
     int auth_status;         // Authentication status (to track the status of public key and password)
 };
 

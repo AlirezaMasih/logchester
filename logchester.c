@@ -24,8 +24,10 @@
 
 void *devlog_handle(void *cfg)
 {
+    struct config_data *conf = (struct config_data *)cfg;
+
     char devlog_buffer[4096];
-    struct devlog_data *dev_data = devlog_collector("/home/masih/test_socket");
+    struct devlog_data *dev_data = devlog_collector(conf->socket_path);
 
     while(1)
     {
