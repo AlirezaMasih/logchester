@@ -1,5 +1,5 @@
 // Define the structure to hold session time information
-#pragma once 
+#pragma once // Ensures this header is included only once during compilation.
 
 #include <stdio.h>  // Standard input/output library for I/O operations
 #include <stdlib.h> // Standard library for memory allocation and general functions

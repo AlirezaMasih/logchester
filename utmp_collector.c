@@ -55,9 +55,9 @@ struct utmp_data *read_file(char *path)
     return Returning_Data;
 }
 
+// Frees the memory allocated for a utmp_data structure and its internal data array
 void utmp_collector_free(struct utmp_data *entry)
 {
-    free(entry->data);
-    free(entry);
-    
+    free(entry->data); // Free the dynamically allocated array of session_data
+    free(entry);       // Free the utmp_data structure itself
 }

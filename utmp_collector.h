@@ -1,4 +1,4 @@
-#pragma once
+#pragma once // Ensures this header is included only once during compilation.
 
 #include <stdio.h> // For I/O operations (input/output)
 #include <stdlib.h> // For memory management (malloc, realloc, free)
