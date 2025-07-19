@@ -67,6 +67,10 @@ int read_config(const char *filename , struct config_data *cfg)
         {
             strcpy(cfg->passphrase , line_buffer + 11);
         }
+        else if(strncmp(line_buffer , "socket_path=" , 12) == 0)
+        {
+            strcpy(cfg->socket_path , line_buffer+12);
+        }
     }
 
     // Close the config file
