@@ -1,7 +1,7 @@
-#include "session_process.h"  // Header file for session processing functions
-#include "send_data.h"        // Header file for sending data to a server
-#include "read_config.h"      // Header for reading configuration file
-#include "devlog_collector.h" // Header for device log collection
+#include "include/session_process.h"  // Header file for session processing functions
+#include "include/send_data.h"        // Header file for sending data to a server
+#include "include/read_config.h"      // Header for reading configuration file
+#include "include/devlog_collector.h" // Header for device log collection
 
 #include <sys/inotify.h>      // Library for file system event monitoring
 #include <unistd.h>           // Header for standard symbolic constants and types
@@ -20,7 +20,7 @@
     #define DeadProcess 8
 */
 
-#define config_file "logchester.conf" // Name of the configuration file
+#define config_file "config/logchester.conf" // Name of the configuration file
 
 // Thread function to handle device log collection
 void *devlog_handle(void *cfg)
