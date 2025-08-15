@@ -18,6 +18,7 @@ A modular, configurable log collector and session analyzer for Linux, written in
 - **Modular design**: Each major functionality is separated into its own module for easy maintenance and extension.
 - **Memory management**: Dynamically allocates and frees resources as needed.
 - **Extensible**: Easy to add new features, output formats, or support for other platforms.
+- **Multi-destination log sending**: Supports sending logs to multiple remote servers and local files.
 
 ---
 
@@ -27,12 +28,12 @@ A modular, configurable log collector and session analyzer for Linux, written in
 |-----------------------|-------------------------------------------------------------------------|
 | utmp_collector.c/h    | Read utmp/wtmp and collect session data                                 |
 | datetime.c/h          | Format and calculate session time/duration                              |
-| read_config.c/h       | Parse configuration file (`logchester.conf`)                            |
+| read_config.c/h       | Parse configuration file (`logchester.conf`). Handles all options.      |
 | send_data.c/h         | Send logs to remote server via SSH/SFTP (password or key)               |
 | session_process.c/h   | Process sessions and generate reports                                   |
 | devlog_collector.c/h  | Collect and print device logs from a UNIX domain socket (SOCK_DGRAM)    |
 | logchester.c          | Main entry point, event loop, thread orchestration                      |
-| logchester.conf       | Configuration file (paths, credentials, authentication, socket, etc)    |
+| config/logchester.conf| Configuration file (paths, credentials, authentication, socket, etc)    |
 
 ---
 
@@ -52,11 +53,13 @@ username = <REMOTE_USERNAME>
 # Password for authentication (leave blank if using SSH key)
 password = <REMOTE_PASSWORD>
 
-# Path to the file on the remote server where logs will be uploaded
-remote_file = /path/on/remote/server/logins.txt
+# Path to the file(s) on the remote server where logs will be uploaded
+remote_logs = /path/on/remote/server/logs.txt
+remote_login_logs = /path/on/remote/server/logins.txt
 
-# Path to the local file where processed logs will be saved
-log_file = /path/to/local/logins.txt
+# Path to the local file(s) where processed logs will be saved
+logs = /path/to/local/logs.txt
+login_logs = /path/to/local/logins.txt
 
 # Path to the UNIX domain socket for device log collection (SOCK_DGRAM)
 # Example: /home/user/socket_name or /dev/log
@@ -65,11 +68,31 @@ socket_path = /path/to/socket
 # (Optional) Path to SSH public and private keys for key-based authentication
 pub_key = /path/to/ssh/public_key
 pri_key = /path/to/ssh/private_key
-passphrase = <KEY_PASSPHRASE>
+passphrase = key_pass_phrase
 ```
 
 - If both password and key are set, key-based authentication will be attempted first.
 - If key authentication fails, password authentication will be attempted as a fallback.
+
+### Configuration Options
+
+| Option              | Description                                                        |
+|--------------------|--------------------------------------------------------------------|
+| utmp_path          | Path to the utmp/wtmp file to monitor                             |
+| ip                 | IP address or hostname of the remote server                       |
+| username           | Username for authentication on the remote server                   |
+| password           | Password for authentication (leave blank if using SSH key)         |
+| remote_logs        | Remote file path for device logs                                  |
+| remote_login_logs  | Remote file path for session/login logs                           |
+| logs               | Local file path for device logs                                   |
+| login_logs         | Local file path for session/login logs                            |
+| socket_path        | Path to UNIX domain socket for device log collection              |
+| pub_key            | Path to SSH public key for key-based authentication (optional)    |
+| pri_key            | Path to SSH private key for key-based authentication (optional)   |
+| passphrase         | Passphrase for private key (optional)                             |
+
+- All options are required except for pub_key, pri_key, and passphrase (used for key-based auth).
+- Both device logs and session logs can be sent and stored separately.
 
 ---
 
