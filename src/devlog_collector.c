@@ -1,4 +1,4 @@
-#include "devlog_collector.h"
+#include "../include/devlog_collector.h"
 
 // Function to initialize and return a devlog_data structure for device log collection
 struct devlog_data *devlog_collector(char *socket_path)

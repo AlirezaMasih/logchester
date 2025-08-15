@@ -1,4 +1,4 @@
-#include "read_config.h"
+#include "../include/read_config.h"
 
 // Reads the configuration file and populates the config_data structure
 int read_config(const char *filename , struct config_data *cfg)
