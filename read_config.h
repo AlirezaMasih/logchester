@@ -12,12 +12,15 @@ struct config_data
     char username[128];      // Username for authentication
     char password[128];      // Password for authentication
     char send_to_server[3];  // Flag for sending data to the server (mostly used for status tracking)
-    char remote_file[128];   // Path of the file on the remote server to send data to
-    char log_file[128];      // Path of the local file to be sent
+    char remote_login_logs[128];   // Path of the file on the remote server to send data to
+    char login_logs[128];      // Path of the local file to be sent
     char public_key[128];    // Path to the public key for key-based authentication
     char private_key[128];   // Path to the private key for key-based authentication
     char passphrase[64];     // Passphrase for the private key, if required
     char socket_path[128];   // Path for the UNIX domain socket used for device log collection
+    char remote_logs[128];
+    char logs[128];
+
     int auth_status;         // Authentication status (to track the status of public key and password)
 };
 

@@ -25,5 +25,5 @@
 #include "read_config.h"
 
 // Sends a file via SSH/SFTP based on the provided configuration
-int send_file(struct config_data *cfg);
+int send_file(struct config_data *cfg , char *local_file , char *remote_file);
 

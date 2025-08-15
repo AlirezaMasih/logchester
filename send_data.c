@@ -1,7 +1,7 @@
 #include "send_data.h"
 
 
-int send_file(struct config_data *cfg)
+int send_file(struct config_data *cfg , char *local_file , char *remote_file)
 {
     LIBSSH2_SESSION *session;
     LIBSSH2_SFTP *sftp;
@@ -54,10 +54,10 @@ int send_file(struct config_data *cfg)
     sftp = libssh2_sftp_init(session);
 
     // Open the local log file for reading
-    int local_file_descriptor = open(cfg->log_file , O_RDONLY);
+    int local_file_descriptor = open(local_file , O_RDONLY);
 
     // Open (or create) the file on the remote server for writing
-    sftp_handle = libssh2_sftp_open(sftp , cfg->remote_file , 
+    sftp_handle = libssh2_sftp_open(sftp , remote_file , 
                                     LIBSSH2_FXF_WRITE | LIBSSH2_FXF_CREAT , 
                                     LIBSSH2_SFTP_S_IRUSR | LIBSSH2_SFTP_S_IWUSR);  // User read/write permission
 

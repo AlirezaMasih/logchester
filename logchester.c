@@ -29,11 +29,21 @@ void *devlog_handle(void *cfg)
 
     char devlog_buffer[4096]; // Buffer for device log messages
     struct devlog_data *dev_data = devlog_collector(conf->socket_path); // Initialize device log collector
+    int receive_status = 0;
 
     while(1)
     {
-        receive_logs(dev_data , devlog_buffer); // Continuously receive and print device logs
+
+        receive_status = receive_logs(dev_data , devlog_buffer , conf); // Continuously receive and print device logs
+        if (receive_status == 1)
+        {
+            // Send the processed data to the server if IP is set
+            send_file(conf , conf->logs , conf->remote_logs);
+            receive_status = 0;
+        }
+
     }
+
     free(dev_data); // Free allocated memory (unreachable in this infinite loop)
 }
 
@@ -70,7 +80,7 @@ void *utmp_handle(void *cfg)
             // Send the processed data to the server if IP is set
             if(strlen(conf->ip) >= 7)
             {
-                send_file(conf);
+                send_file(conf , conf->login_logs , conf->remote_login_logs);
             }
         }
     }
