@@ -25,7 +25,7 @@ void session_handle(struct utmp_data *entry , struct config_data *cfg)
     };
 
     // Open log file for writing
-    FILE *log_file = fopen(cfg->log_file, "w");
+    FILE *login_logs = fopen(cfg->login_logs, "w");
 
     // Loop through all the entries in the provided utmp data
     for (int i = 0; i < entry->length; i++)
@@ -45,7 +45,7 @@ void session_handle(struct utmp_data *entry , struct config_data *cfg)
                     session_time_info = show_time((time_t)data[i].tv_sec, 0, 0);
 
                     // Write formatted data into the log file
-                    fprintf(log_file, "%-12s%-12s%-27s%-17s- %-10s%-12s\n",
+                    fprintf(login_logs, "%-12s%-12s%-27s%-17s- %-10s%-12s\n",
                             data[i].ut_user,
                             data[i].ut_line,
                             data[i].ut_host,
@@ -64,7 +64,7 @@ void session_handle(struct utmp_data *entry , struct config_data *cfg)
                     session_time_info = show_time((time_t)data[i].tv_sec, (time_t)data[i + endCounter].tv_sec, 1); // 1 means crash
 
                     // Write formatted data into the log file
-                    fprintf(log_file, "%-12s%-12s%-27s%-17s- %-10s%-12s\n",
+                    fprintf(login_logs, "%-12s%-12s%-27s%-17s- %-10s%-12s\n",
                             data[i].ut_user,
                             data[i].ut_line,
                             data[i].ut_host,
@@ -83,7 +83,7 @@ void session_handle(struct utmp_data *entry , struct config_data *cfg)
                     session_time_info = show_time((time_t)data[i].tv_sec, (time_t)data[i + endCounter].tv_sec, 4); // 4 means shutdown
 
                     // Write formatted data into the log file
-                    fprintf(log_file, "%-12s%-12s%-27s%-17s- %-10s%-12s%-30s\n",
+                    fprintf(login_logs, "%-12s%-12s%-27s%-17s- %-10s%-12s%-30s\n",
                             data[i].ut_user,
                             data[i].ut_line,
                             data[i].ut_host,
@@ -114,7 +114,7 @@ void session_handle(struct utmp_data *entry , struct config_data *cfg)
                 {
                     // Call show_time with 0 (indicating user is still logged in)
                     session_time_info = show_time((time_t)data[i].tv_sec, 0, 0);
-                    fprintf(log_file, "%-12s%-12s%-27s%-17s- %-10s%-12s%-30s\n",
+                    fprintf(login_logs, "%-12s%-12s%-27s%-17s- %-10s%-12s%-30s\n",
                             data[i].ut_user,
                             data[i].ut_line,
                             data[i].ut_host,
@@ -134,7 +134,7 @@ void session_handle(struct utmp_data *entry , struct config_data *cfg)
                     session_time_info = show_time((time_t)data[i].tv_sec, (time_t)data[i + endCounter].tv_sec, 2); // 2 means down
 
                     // Write formatted data into the log file
-                    fprintf(log_file, "%-12s%-12s%-27s%-17s- %-10s%-12s%-30s\n",
+                    fprintf(login_logs, "%-12s%-12s%-27s%-17s- %-10s%-12s%-30s\n",
                             data[i].ut_user,
                             data[i].ut_line,
                             data[i].ut_host,
@@ -161,7 +161,7 @@ void session_handle(struct utmp_data *entry , struct config_data *cfg)
                         session_time_info = show_time((time_t)data[i].tv_sec, (time_t)data[i + endCounter].tv_sec, 4);
 
                         // Write formatted data into the log file
-                        fprintf(log_file, "%-12s%-12s%-27s%-17s- %-10s%-12s%-30s\n",
+                        fprintf(login_logs, "%-12s%-12s%-27s%-17s- %-10s%-12s%-30s\n",
                                 data[i].ut_user,
                                 data[i].ut_line,
                                 data[i].ut_host,
@@ -181,7 +181,7 @@ void session_handle(struct utmp_data *entry , struct config_data *cfg)
     }
 
     // Close the log file and free any dynamically allocated memory
-    fclose(log_file);
+    fclose(login_logs);
     utmp_collector_free(entry);        // Free memory for the entry structure
 }
 

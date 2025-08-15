@@ -47,13 +47,13 @@ int read_config(const char *filename , struct config_data *cfg)
         {
             strcpy(cfg->password , line_buffer + 9);
         }
-        else if(strncmp(line_buffer , "remote_file=" , 12) == 0)
+        else if(strncmp(line_buffer , "remote_login_logs=" , 18) == 0)
         {
-            strcpy(cfg->remote_file , line_buffer + 12);
+            strcpy(cfg->remote_login_logs , line_buffer + 18);
         }
-        else if(strncmp(line_buffer , "log_file=" , 9) == 0)
+        else if(strncmp(line_buffer , "login_logs=" , 11) == 0)
         {
-            strcpy(cfg->log_file , line_buffer + 9);
+            strcpy(cfg->login_logs , line_buffer + 11);
         }
         else if(strncmp(line_buffer , "pub_key=" , 8) == 0)
         {
@@ -70,6 +70,14 @@ int read_config(const char *filename , struct config_data *cfg)
         else if(strncmp(line_buffer , "socket_path=" , 12) == 0)
         {
             strcpy(cfg->socket_path , line_buffer+12);
+        }
+        else if(strncmp(line_buffer , "remote_logs=" , 12) == 0)
+        {
+            strcpy(cfg->remote_logs , line_buffer+12);
+        }
+        else if(strncmp(line_buffer , "logs=" , 5) == 0)
+        {
+            strcpy(cfg->logs , line_buffer + 5);
         }
     }
 

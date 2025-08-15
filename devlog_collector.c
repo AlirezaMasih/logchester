@@ -25,14 +25,18 @@ struct devlog_data *devlog_collector(char *socket_path)
 }
 
 // Function to receive logs from the device and print them
-void receive_logs(struct devlog_data *dev_data , char *devlog_buffer)
+int receive_logs(struct devlog_data *dev_data , char *devlog_buffer , struct config_data *cfg)
 {
     // Receive a datagram from the socket
     ssize_t received = recvfrom(dev_data->socket_fd , devlog_buffer , 4096 , 0 , (struct sockaddr *)&dev_data->sender_addr , &dev_data->addr_len);
+
+    FILE *local_logs = fopen(cfg->logs , "a");
     if(received > 0)
     {
         devlog_buffer[received] = '\0';      // Null-terminate the received data
-        printf("%s\n" , devlog_buffer);      // Print the log message
+        fprintf(local_logs , "%s\n" , devlog_buffer);      // Print the log message
         memset(devlog_buffer , 0 , 4096);    // Clear the buffer for the next message
+        fclose(local_logs);
+        return 1;
     }
 }
