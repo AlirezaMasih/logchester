@@ -8,6 +8,7 @@ struct session_time *show_time(time_t login_time, time_t logout_time , short sta
     // Buffers to hold the formatted login and logout times
     char login[19];  // Buffer to hold the formatted login time
     char logout[30]; // Buffer to hold the formatted logout time
+    strcpy(time_data->login_duration , "\0");
 
     // If logout_time is 0, the session is still ongoing
     if(status == 0)

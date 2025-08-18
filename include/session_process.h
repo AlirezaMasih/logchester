@@ -11,3 +11,5 @@
 
 // Processes session data and writes output to the log file based on the configuration.
 void session_handle(struct utmp_data *entry, struct config_data *cfg);
+
+void printing(FILE *file_name , struct session_time *time_info , struct session_data *data);
