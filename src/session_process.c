@@ -11,19 +11,7 @@ void session_handle(struct utmp_data *entry , struct config_data *cfg)
     int innerCounter = 0;
     uint32_t time_offset;
 
-    // Array to hold the types of records (for easy reference in the log)
-    char record_types[9][14] = {
-        "EMPTY",         // 0
-        "RUN_LVL",       // 1
-        "BOOT_TIME",     // 2
-        "NEW_TIME",      // 3
-        "OLD_TIME",      // 4
-        "INIT_PROCESS",  // 5
-        "LOGIN_PROCESS", // 6
-        "USER_PROCESS",  // 7
-        "DEAD_PROCESS"   // 8
-    };
-
+    
     // Open log file for writing
     FILE *login_logs = fopen(cfg->login_logs, "w");
 
@@ -45,13 +33,7 @@ void session_handle(struct utmp_data *entry , struct config_data *cfg)
                     session_time_info = show_time((time_t)data[i].tv_sec, 0, 0);
 
                     // Write formatted data into the log file
-                    fprintf(login_logs, "%-12s%-12s%-27s%-17s- %-10s%-12s\n",
-                            data[i].ut_user,
-                            data[i].ut_line,
-                            data[i].ut_host,
-                            session_time_info->login_time,
-                            session_time_info->logout_time,
-                            record_types[data[i].ut_type]);
+                    printing(login_logs , session_time_info , data+i);
 
                     // Free the allocated memory for session_time_info
                     free(session_time_info);
@@ -64,13 +46,7 @@ void session_handle(struct utmp_data *entry , struct config_data *cfg)
                     session_time_info = show_time((time_t)data[i].tv_sec, (time_t)data[i + endCounter].tv_sec, 1); // 1 means crash
 
                     // Write formatted data into the log file
-                    fprintf(login_logs, "%-12s%-12s%-27s%-17s- %-10s%-12s\n",
-                            data[i].ut_user,
-                            data[i].ut_line,
-                            data[i].ut_host,
-                            session_time_info->login_time,
-                            session_time_info->logout_time,
-                            record_types[data[i].ut_type]);
+                    printing(login_logs , session_time_info , data+i);
 
                     // Free the allocated memory for session_time_info
                     free(session_time_info);
@@ -80,17 +56,10 @@ void session_handle(struct utmp_data *entry , struct config_data *cfg)
                 // If the next entry indicates a shutdown process
                 else if (strcmp(data[i + endCounter].ut_user, "shutdown") == 0)
                 {
-                    session_time_info = show_time((time_t)data[i].tv_sec, (time_t)data[i + endCounter].tv_sec, 4); // 4 means shutdown
+                    session_time_info = show_time((time_t)data[i].tv_sec, (time_t)data[i + endCounter].tv_sec, 2); // 4 means shutdown
 
                     // Write formatted data into the log file
-                    fprintf(login_logs, "%-12s%-12s%-27s%-17s- %-10s%-12s%-30s\n",
-                            data[i].ut_user,
-                            data[i].ut_line,
-                            data[i].ut_host,
-                            session_time_info->login_time,
-                            session_time_info->logout_time,
-                            session_time_info->login_duration,
-                            record_types[data[i].ut_type]);
+                    printing(login_logs , session_time_info , data+i);
 
                     // Free the allocated memory for session_time_info
                     free(session_time_info);
@@ -114,14 +83,9 @@ void session_handle(struct utmp_data *entry , struct config_data *cfg)
                 {
                     // Call show_time with 0 (indicating user is still logged in)
                     session_time_info = show_time((time_t)data[i].tv_sec, 0, 0);
-                    fprintf(login_logs, "%-12s%-12s%-27s%-17s- %-10s%-12s%-30s\n",
-                            data[i].ut_user,
-                            data[i].ut_line,
-                            data[i].ut_host,
-                            session_time_info->login_time,
-                            session_time_info->logout_time,
-                            session_time_info->login_duration,
-                            record_types[data[i].ut_type]);
+
+                    printing(login_logs , session_time_info , data+i);
+
 
                     // Free the allocated memory for session_time_info
                     free(session_time_info);
@@ -134,15 +98,7 @@ void session_handle(struct utmp_data *entry , struct config_data *cfg)
                     session_time_info = show_time((time_t)data[i].tv_sec, (time_t)data[i + endCounter].tv_sec, 2); // 2 means down
 
                     // Write formatted data into the log file
-                    fprintf(login_logs, "%-12s%-12s%-27s%-17s- %-10s%-12s%-30s\n",
-                            data[i].ut_user,
-                            data[i].ut_line,
-                            data[i].ut_host,
-                            session_time_info->login_time,
-                            session_time_info->logout_time,
-                            session_time_info->login_duration,
-                            record_types[data[i].ut_type]);
-
+                    printing(login_logs , session_time_info , data+i);
                     // Free the allocated memory for session_time_info
                     free(session_time_info);
                     break;
@@ -161,14 +117,8 @@ void session_handle(struct utmp_data *entry , struct config_data *cfg)
                         session_time_info = show_time((time_t)data[i].tv_sec, (time_t)data[i + endCounter].tv_sec, 4);
 
                         // Write formatted data into the log file
-                        fprintf(login_logs, "%-12s%-12s%-27s%-17s- %-10s%-12s%-30s\n",
-                                data[i].ut_user,
-                                data[i].ut_line,
-                                data[i].ut_host,
-                                session_time_info->login_time,
-                                session_time_info->logout_time,
-                                session_time_info->login_duration,
-                                record_types[data[i].ut_type]);
+
+                        printing(login_logs , session_time_info , data+i);
 
                         // Free the allocated memory for session_time_info
                         free(session_time_info);
@@ -185,3 +135,30 @@ void session_handle(struct utmp_data *entry , struct config_data *cfg)
     utmp_collector_free(entry);        // Free memory for the entry structure
 }
 
+
+void printing(FILE *file_name , struct session_time *time_info , struct session_data *data)
+{
+
+    // Array to hold the types of records (for easy reference in the log)
+    char record_types[9][14] = {
+        "EMPTY",         // 0
+        "RUN_LVL",       // 1
+        "BOOT_TIME",     // 2
+        "NEW_TIME",      // 3
+        "OLD_TIME",      // 4
+        "INIT_PROCESS",  // 5
+        "LOGIN_PROCESS", // 6
+        "USER_PROCESS",  // 7
+        "DEAD_PROCESS"   // 8
+    };
+
+    fprintf(file_name, "%-12s%-12s%-27s%-17s- %-10s%-12s%-30s\n",
+        data->ut_user,
+        data->ut_line,
+        data->ut_host,
+        time_info->login_time,
+        time_info->logout_time,
+        time_info->login_duration,
+        record_types[data->ut_type]);
+
+}
