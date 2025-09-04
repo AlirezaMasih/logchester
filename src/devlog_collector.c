@@ -34,7 +34,7 @@ int receive_logs(struct devlog_data *dev_data , char *devlog_buffer , struct con
     if(received > 0)
     {
         devlog_buffer[received] = '\0';      // Null-terminate the received data
-        fprintf(local_logs , "%s" , devlog_buffer);      // Print the log message
+        fprintf(local_logs , "%s\n" , devlog_buffer);      // Print the log message
         memset(devlog_buffer , 0 , 4096);    // Clear the buffer for the next message
         fclose(local_logs);
         return 1;
